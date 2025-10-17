@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+*::-webkit-scrollbar{
+    width: 0;
+}
+
+
+.arabic_text{
+    font-family: 'Traditional Arabic';
+    font-size: 1.4em;
+}
