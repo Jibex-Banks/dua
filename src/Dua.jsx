@@ -34,12 +34,13 @@ export default function Dua() {
     // Simulated API response - replace with actual API call
     setTimeout(async () => {
       try {
-        const queryApi = await axios.post("http://127.0.0.1:8000/query", {"question": query });
+        // const queryApi = await axios.post("http://127.0.0.1:8000/query", {"question": query });
+        const queryApi = await axios.post("https://h3nt3z9t-8000.uks1.devtunnels.ms/query", { "question": query });
         var response_data = queryApi.data;
       } catch (error) {
-        response_data = [{"background":"Sorry, there was an issue with our System"}];
+        response_data = [{ "background": "Sorry,Our system is down, there was an issue with our System" }];
       }
-      
+
       const botMessage = { type: 'bot', duas: response_data };
       setMessages(prev => [...prev, botMessage]);
       setIsLoading(false);
