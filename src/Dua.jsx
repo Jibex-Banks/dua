@@ -37,7 +37,7 @@ export default function Dua() {
         const queryApi = await axios.post("http://127.0.0.1:8000/query", {"question": query });
         var response_data = queryApi.data;
       } catch (error) {
-        console.error(error);
+        response_data = [{"background":"Sorry, there was an issue with our System"}];
       }
       
       const botMessage = { type: 'bot', duas: response_data };
