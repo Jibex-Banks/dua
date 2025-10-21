@@ -74,7 +74,7 @@ export default function Dua() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="flex flex-col h-dvh bg-gradient-to-b from-blue-50 to-white">
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center space-x-3">
           <Book className="w-8 h-8" />
