@@ -35,10 +35,10 @@ export default function Dua() {
     setTimeout(async () => {
       try {
         // const queryApi = await axios.post("http://127.0.0.1:8000/query", {"question": query });
-        const queryApi = await axios.post("https://h3nt3z9t-8000.uks1.devtunnels.ms/query", { "question": query });
+        const queryApi = await axios.post("https://huggingface.co/spaces/JibexBanks/duabymoon/query", { "question": query });
         var response_data = queryApi.data;
       } catch (error) {
-        response_data = [{ "background": "Sorry,Our system is down, there was an issue with our System" }];
+        response_data = [{ "error": 'Sorry, An error Occured' }];
       }
 
       const botMessage = { type: 'bot', duas: response_data };
@@ -134,6 +134,16 @@ export default function Dua() {
                         key={duaIndex}
                         className="bg-white rounded-2xl rounded-tl-sm shadow-lg p-5 border border-blue-100"
                       >
+                        {dua.error && (
+                          <div>
+                            <p className="text-xs font-semibold text-red-600 mb-1 ">
+                              System Error
+                            </p>
+                            <p className="text-sm text-gray-700 leading-relaxed">
+                              {dua.error}
+                            </p>
+                          </div>
+                        )}
                         {dua.background && (
                           <div className="mb-4 pb-4 border-b border-gray-200">
                             <p className="text-xs font-semibold text-blue-600 mb-2">
