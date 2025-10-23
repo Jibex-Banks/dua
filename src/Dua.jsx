@@ -35,7 +35,7 @@ export default function Dua() {
     setTimeout(async () => {
       try {
         // const queryApi = await axios.post("http://127.0.0.1:8000/query", {"question": query });
-        const queryApi = await axios.post("https://huggingface.co/spaces/JibexBanks/duabymoon/query", { "question": query });
+        const queryApi = await axios.post("https://JibexBanks-duabymoon.hf.space/query", { "question": query });
         var response_data = queryApi.data;
       } catch (error) {
         response_data = [{ "error": 'Sorry, An error Occured' }];
