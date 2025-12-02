@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, Book } from 'lucide-react';
 import { SparklesIcon } from 'lucide-react';
 import { SendHorizonal } from 'lucide-react';
-import axios from 'axios';
 
 
 export default function Dua() {
@@ -23,28 +22,46 @@ export default function Dua() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!query.trim()) return;
 
     const userMessage = { type: 'user', text: query };
     setMessages(prev => [...prev, userMessage]);
+    const currentQuery = query;
     setQuery('');
     setIsLoading(true);
 
-    // Simulated API response - replace with actual API call
-    setTimeout(async () => {
-      try {
-        // const queryApi = await axios.post("http://127.0.0.1:8000/query", {"question": query });
-        const queryApi = await axios.post("https://JibexBanks-duabymoon.hf.space/query", { "question": query });
-        var response_data = queryApi.data;
-      } catch (error) {
-        response_data = [{ "error": 'Sorry, An error Occured' }];
+    let response_data;
+    try {
+      const response = await fetch("https://JibexBanks-duabymoon.hf.space/query", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ question: currentQuery })
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
 
-      const botMessage = { type: 'bot', duas: response_data };
-      setMessages(prev => [...prev, botMessage]);
-      setIsLoading(false);
-    }, 1000);
+      const data = await response.json();
+      
+      // Ensure response_data is always an array
+      response_data = Array.isArray(data) ? data : [data];
+      
+      // If empty array or null/undefined, show error
+      if (!response_data || response_data.length === 0) {
+        response_data = [{ error: 'No prayers found for your query. Please try different keywords.' }];
+      }
+    } catch (error) {
+      console.error('API Error:', error);
+      response_data = [{ error: 'Sorry, an error occurred while fetching prayers. Please try again.' }];
+    }
+
+    const botMessage = { type: 'bot', duas: response_data };
+    setMessages(prev => [...prev, botMessage]);
+    setIsLoading(false);
   };
 
   const handleKeyPress = (e) => {
@@ -62,7 +79,7 @@ export default function Dua() {
             <Book className="w-20 h-20 text-white mx-auto" />
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">Dua</h1>
-          <p className="text-blue-200 text-lg">Find Qur'anic Prayers</p>
+          <p className="text-blue-200 text-lg">Find Islamic Prayers</p>
           <div className="mt-8 flex justify-center space-x-2">
             <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
             <div className="w-2 h-2 bg-white rounded-full animate-pulse delay-100"></div>
@@ -74,13 +91,13 @@ export default function Dua() {
   }
 
   return (
-    <div className="flex flex-col h-dvh bg-gradient-to-b from-blue-50 to-white">
+    <div className="flex flex-col h-screen bg-gradient-to-b from-blue-50 to-white">
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center space-x-3">
           <Book className="w-8 h-8" />
           <div>
             <h1 className="text-xl font-bold">Dua</h1>
-            <p className="text-xs text-blue-100">Find Qur'anic Prayers</p>
+            <p className="text-xs text-blue-100">Find Islamic Prayers</p>
           </div>
         </div>
       </div>
@@ -94,17 +111,13 @@ export default function Dua() {
                 Welcome to Dua
               </h2>
               <p className="text-gray-500 mb-6">
-                Ask for any Qur'anic prayer in natural language
+                {/* Ask for any Islamic prayer in natural language */}
+                Ask for Islamic prayers
               </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
-                <p className="text-sm text-blue-800">
-                  <span className="font-semibold">Note:</span> Currently, only Qur'anic prayers are available. More Islamic prayers will be added soon, In sha Allah.
-                </p>
-              </div>
               <div className="mt-8 space-y-2">
                 <p className="text-sm text-gray-600 font-semibold">Try asking:</p>
                 <div className="flex flex-wrap justify-center gap-2">
-                  {['Prayer before traveling', 'Dua for guidance', 'Prayer for patience'].map((example) => (
+                  {['Prayer before leaving the house', 'Prayer before eating', 'Prayers for breaking the fast'].map((example) => (
                     <button
                       key={example}
                       onClick={() => setQuery(example)}
@@ -129,15 +142,15 @@ export default function Dua() {
               ) : (
                 <div className="flex justify-start mb-4">
                   <div className="space-y-3 max-w-xl">
-                    {message.duas.map((dua, duaIndex) => (
+                    {(message.duas || []).map((dua, duaIndex) => (
                       <div
                         key={duaIndex}
                         className="bg-white rounded-2xl rounded-tl-sm shadow-lg p-5 border border-blue-100"
                       >
                         {dua.error && (
                           <div>
-                            <p className="text-xs font-semibold text-red-600 mb-1 ">
-                              System Error
+                            <p className="text-xs font-semibold text-red-600 mb-1">
+                              Error
                             </p>
                             <p className="text-sm text-gray-700 leading-relaxed">
                               {dua.error}
@@ -160,7 +173,7 @@ export default function Dua() {
                             <p className="text-sm font-semibold text-blue-600 mb-2">
                               Arabic
                             </p>
-                            <p className="arabic_text text-sl text-blue-600 leading-relaxed" dir='rtl' >
+                            <p className="text-xl text-blue-600 leading-relaxed" dir="rtl">
                               {dua.arabic}
                             </p>
                           </div>
@@ -235,7 +248,7 @@ export default function Dua() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes fade-in {
           from {
             opacity: 0;

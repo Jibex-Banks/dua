@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dua Search Pitch Deck</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.4;
+        }
+        
+        .slide {
+            width: 297mm;
+            height: 210mm;
+            page-break-after: always;
+            padding: 30px 50px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .slide:last-child {
+            page-break-after: auto;
+        }
+        
+        .slide-number {
+            position: absolute;
+            bottom: 15px;
+            right: 25px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+        
+        /* Title Slide */
+        .title-slide {
+            background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .title-slide h1 {
+            font-size: 64px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .title-slide .subtitle {
+            font-size: 32px;
+            margin-bottom: 25px;
+        }
+        
+        .title-slide .tagline {
+            font-size: 22px;
+            font-style: italic;
+        }
+        
+        /* Content Slides */
+        .content-slide {
+            background: white;
+        }
+        
+        .slide-title {
+            font-size: 36px;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 4px solid #2563eb;
+            font-weight: bold;
+        }
+        
+        .content-box {
+            background: #eff6ff;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .content-box h3 {
+            color: #1e3a8a;
+            font-size: 16px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .content-box p {
+            color: #374151;
+            font-size: 13px;
+            line-height: 1.3;
+        }
+        
+        .highlight-box {
+            background: #1e3a8a;
+            color: white;
+            padding: 18px;
+            border-radius: 6px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .highlight-box .big-number {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: start;
+            background: #eff6ff;
+            padding: 12px;
+            border-radius: 6px;
+        }
+        
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            background: #2563eb;
+            border-radius: 50%;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        
+        .stat-box {
+            background: #eff6ff;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #374151;
+            font-size: 12px;
+            line-height: 1.3;
+        }
+        
+        .timeline-item {
+            border-left: 3px solid #2563eb;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            background: #eff6ff;
+        }
+        
+        .timeline-item h4 {
+            color: #1e3a8a;
+            font-size: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .timeline-item p {
+            font-size: 12px;
+            line-height: 1.3;
+        }
+        
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Slide 1: Title -->
+    <div class="slide title-slide">
+        <div style="font-size: 70px; margin-bottom: 20px;">📖</div>
+        <h1>Dua Search</h1>
+        <p class="subtitle">Connecting Muslims to Qur'anic Prayers Through AI</p>
+        <p class="tagline">"Ask in your own words, receive divine guidance"</p>
+        <div class="slide-number">1 / 15</div>
+    </div>
+
+    <!-- Slide 2: The Problem -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">The Challenge Muslims Face Daily</h2>
+        <div class="content-box">
+            <h3>Language Barrier</h3>
+            <p>Most Muslims don't know prayers in Arabic or can't remember specific verses</p>
+        </div>
+        <div class="content-box">
+            <h3>Search Difficulty</h3>
+            <p>Traditional Islamic texts aren't easily searchable by intent or situation</p>
+        </div>
+        <div class="content-box">
+            <h3>Time-Consuming</h3>
+            <p>Finding the right prayer for a specific life situation takes hours of research</p>
+        </div>
+        <div class="content-box">
+            <h3>Disconnect</h3>
+            <p>Young Muslims struggle to connect with traditional Islamic resources</p>
+        </div>
+        <div class="highlight-box" style="margin-top: 20px;">
+            <div class="big-number">1.8 billion Muslims worldwide</div>
+            <div style="font-size: 16px;">80% don't speak Arabic as a first language</div>
+        </div>
+        <div class="slide-number">2 / 15</div>
+    </div>
+
+    <!-- Slide 3: The Solution -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">Dua Search - Your AI-Powered Prayer Assistant</h2>
+        <div class="highlight-box" style="margin-bottom: 15px;">
+            <p style="font-size: 15px;">Natural language search for Qur'anic prayers. Users ask questions like "prayer before traveling" and instantly receive relevant verses with translation and context.</p>
+        </div>
+        
+        <div class="feature-item" style="margin-bottom: 10px;">
+            <div class="feature-icon"></div>
+            <div>
+                <h3 style="margin: 0; font-size: 15px; color: #1e3a8a;">Natural Language Processing</h3>
+                <p style="margin: 0; font-size: 13px;">Ask in plain English (or any language)</p>
+            </div>
+        </div>
+        
+        <div class="feature-item" style="margin-bottom: 10px;">
+            <div class="feature-icon"></div>
+            <div>
+                <h3 style="margin: 0; font-size: 15px; color: #1e3a8a;">Instant Results</h3>
+                <p style="margin: 0; font-size: 13px;">AI-powered search returns relevant prayers in seconds</p>
+            </div>
+        </div>
+        
+        <div class="feature-item" style="margin-bottom: 10px;">
+            <div class="feature-icon"></div>
+            <div>
+                <h3 style="margin: 0; font-size: 15px; color: #1e3a8a;">Complete Context</h3>
+                <p style="margin: 0; font-size: 13px;">Background, Arabic text, reference, and translation</p>
+            </div>
+        </div>
+        
+        <div class="feature-item" style="margin-bottom: 10px;">
+            <div class="feature-icon"></div>
+            <div>
+                <h3 style="margin: 0; font-size: 15px; color: #1e3a8a;">Mobile-First Design</h3>
+                <p style="margin: 0; font-size: 13px;">Beautiful, intuitive chat interface</p>
+            </div>
+        </div>
+        
+        <div class="feature-item">
+            <div class="feature-icon"></div>
+            <div>
+                <h3 style="margin: 0; font-size: 15px; color: #1e3a8a;">Authentic Sources</h3>
+                <p style="margin: 0; font-size: 13px;">Only verified Qur'anic prayers</p>
+            </div>
+        </div>
+        
+        <div class="highlight-box" style="margin-top: 15px;">
+            <p style="font-size: 16px; font-weight: bold;">"From searching through books for hours to finding the right prayer in seconds"</p>
+        </div>
+        
+        <div class="slide-number">3 / 15</div>
+    </div>
+
+    <!-- Slide 4: How It Works -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">The Technology Behind Dua Search</h2>
+        <div class="highlight-box" style="text-align: left; margin-bottom: 15px;">
+            <h3 style="font-size: 20px; margin-bottom: 12px;">Technical Architecture</h3>
+            <p style="margin-bottom: 6px; font-size: 14px;"><strong>Frontend:</strong> React-based mobile-first interface</p>
+            <p style="margin-bottom: 6px; font-size: 14px;"><strong>AI Engine:</strong> Natural Language Processing for query understanding</p>
+            <p style="margin-bottom: 6px; font-size: 14px;"><strong>Database:</strong> Curated collection of authenticated Qur'anic prayers</p>
+            <p style="font-size: 14px;"><strong>API:</strong> Fast, scalable backend for instant responses</p>
+        </div>
+        
+        <div class="grid-2" style="margin-bottom: 15px;">
+            <div style="background: #fee2e2; padding: 20px; border-radius: 6px; border: 2px solid #dc2626;">
+                <h4 style="color: #7f1d1d; margin-bottom: 8px; font-weight: bold; font-size: 16px;">Traditional Method</h4>
+                <p style="color: #374151; font-size: 13px;">Manual search through books</p>
+                <p style="font-size: 36px; font-weight: bold; color: #dc2626; margin-top: 12px;">30+ minutes</p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 20px; border-radius: 6px; border: 2px solid #059669;">
+                <h4 style="color: #064e3b; margin-bottom: 8px; font-weight: bold; font-size: 16px;">Our Solution</h4>
+                <p style="color: #374151; font-size: 13px;">AI-powered search</p>
+                <p style="font-size: 36px; font-weight: bold; color: #059669; margin-top: 12px;">20 seconds</p>
+            </div>
+        </div>
+        
+        <div class="content-box">
+            <h3 style="font-size: 16px;">Why It's Better</h3>
+            <p style="margin-top: 8px; font-size: 13px;">✓ <strong>Traditional Apps:</strong> Static content, poor search</p>
+            <p style="font-size: 13px;">✓ <strong>General Islamic Apps:</strong> Too broad, not focused</p>
+            <p style="font-size: 13px;">✓ <strong>Our Advantage:</strong> AI-powered, conversational, prayer-specific</p>
+        </div>
+        
+        <div class="slide-number">4 / 15</div>
+    </div>
+
+    <!-- Slide 5: Market Opportunity -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">Market Opportunity</h2>
+        <div class="highlight-box" style="text-align: left; margin-bottom: 15px; padding: 15px;">
+            <h3 style="font-size: 20px; margin-bottom: 12px;">Target Market</h3>
+            <div class="grid-2" style="gap: 12px; margin-top: 10px;">
+                <div>
+                    <p style="font-weight: bold; margin-bottom: 3px; font-size: 14px;">Young Muslims (18-35)</p>
+                    <p style="font-size: 12px;">Tech-savvy, seeking connection to faith</p>
+                </div>
+                <div>
+                    <p style="font-weight: bold; margin-bottom: 3px; font-size: 14px;">New Muslims/Converts</p>
+                    <p style="font-size: 12px;">Need accessible Islamic resources</p>
+                </div>
+                <div>
+                    <p style="font-weight: bold; margin-bottom: 3px; font-size: 14px;">Non-Arabic Speakers</p>
+                    <p style="font-size: 12px;">1.4 billion Muslims worldwide</p>
+                </div>
+                <div>
+                    <p style="font-weight: bold; margin-bottom: 3px; font-size: 14px;">Parents</p>
+                    <p style="font-size: 12px;">Teaching children about prayers</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid-2">
+            <div class="stat-box">
+                <div class="stat-number">1.8B</div>
+                <div class="stat-label">Global Muslim Population<br>(24% of world)</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">65%</div>
+                <div class="stat-label">Smartphone Penetration<br>Among Muslims</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">$500M+</div>
+                <div class="stat-label">Islamic App Market<br>Growing 12% annually</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">200M+</div>
+                <div class="stat-label">Target Market<br>Smartphone users</div>
+            </div>
+        </div>
+        
+        <div class="slide-number">5 / 15</div>
+    </div>
+
+    <!-- Slide 6: Impact Model -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">Our Approach - Impact Over Profit</h2>
+        <div style="background: linear-gradient(135deg, #059669 0%, #065f46 100%); color: white; padding: 22px; border-radius: 6px; text-align: center; margin-bottom: 15px;">
+            <div style="font-size: 40px; margin-bottom: 10px;">❤️</div>
+            <h3 style="font-size: 24px; margin-bottom: 10px;">Free for Everyone, Forever</h3>
+            <p style="font-size: 15px;">Our mission is to connect Muslims to their faith, not to monetize spirituality</p>
+        </div>
+        
+        <div class="content-box">
+            <h3>✓ Completely Free Access</h3>
+            <p>All Qur'anic prayers accessible to everyone, no paywalls or subscriptions</p>
+        </div>
+        
+        <div class="content-box">
+            <h3>✓ No Advertisements</h3>
+            <p>Clean, distraction-free experience that respects the spiritual nature of content</p>
+        </div>
+        
+        <div class="content-box">
+            <h3>✓ Community-Driven</h3>
+            <p>Built with love for the Muslim community, sustained by donations and grants</p>
+        </div>
+        
+        <div class="content-box">
+            <h3>✓ Open & Transparent</h3>
+            <p>Committed to keeping this resource accessible for generations to come</p>
+        </div>
+        
+        <div class="highlight-box" style="margin-top: 15px;">
+            <p style="font-size: 15px; font-weight: bold;">Sustainability through voluntary support, grants, and partnerships with Islamic organizations</p>
+        </div>
+        
+        <div class="slide-number">6 / 15</div>
+    </div>
+
+    <!-- Slide 7: Roadmap -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">Development Roadmap</h2>
+        
+        <div class="timeline-item" style="border-color: #059669; background: #d1fae5;">
+            <h4 style="color: #064e3b;">Q1 2025 (Current)</h4>
+            <p>✅ MVP Launch - Qur'anic prayers only • ✅ Natural language search • ✅ Mobile-responsive design • 🔄 User testing and feedback</p>
+        </div>
+        
+        <div class="timeline-item">
+            <h4>Q2 2025</h4>
+            <p>• Expand to Hadith-based prayers • Add audio recitations • Implement user accounts • Multi-language support (Arabic, Urdu, Turkish, Malay)</p>
+        </div>
+        
+        <div class="timeline-item">
+            <h4>Q3 2025</h4>
+            <p>• Mobile apps (iOS & Android) • Personalized prayer collections • Bookmark and favorites • Social sharing features • Community features</p>
+        </div>
+        
+        <div class="timeline-item">
+            <h4>Q4 2025</h4>
+            <p>• Advanced AI - context-aware recommendations • Voice search capability • Offline mode • Partnerships with mosques and Islamic centers</p>
+        </div>
+        
+        <div class="timeline-item" style="border-color: #7c3aed; background: #ede9fe;">
+            <h4 style="color: #5b21b6;">2026 and Beyond</h4>
+            <p>• Daily prayer reminders with relevant duas • Integration with Islamic calendar events • Educational content and courses • Global expansion (10+ languages)</p>
+        </div>
+        
+        <div class="slide-number">7 / 15</div>
+    </div>
+
+    <!-- Slide 8: Traction -->
+<div class="slide content-slide">
+    <h2 class="slide-title">Traction & Metrics</h2>
+    
+    <div class="highlight-box" style="margin-bottom: 18px; padding: 20px;">
+        <h3 style="font-size: 20px; margin-bottom: 15px;">Current Status</h3>
+        <div class="grid-2" style="gap: 15px;">
+            <div>
+                <p style="font-size: 32px; font-weight: bold; margin-bottom: 3px;">MVP</p>
+                <p style="font-size: 14px;">In beta testing</p>
+            </div>
+            <div>
+                <p style="font-size: 32px; font-weight: bold; margin-bottom: 3px;">50+</p>
+                <p style="font-size: 14px;">Authenticated prayers</p>
+            </div>
+            <div>
+                <p style="font-size: 32px; font-weight: bold; margin-bottom: 3px;">&lt;5s</p>
+                <p style="font-size: 14px;">Average response time</p>
+            </div>
+            <div>
+                <p style="font-size: 32px; font-weight: bold; margin-bottom: 3px;">100%</p>
+                <p style="font-size: 14px;">Free forever</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-box" style="margin-bottom: 12px;">
+        <h3>Early User Feedback</h3>
+        <p style="margin-top: 8px; font-style: italic;">
+            "Finally, an easy way to find prayers!" • 
+            "The interface is so intuitive" • 
+            "This is what modern Islamic apps should look like"
+        </p>
+    </div>
+
+    <div class="content-box">
+        <h3>Growth Strategy</h3>
+        <p style="margin-top: 8px;">
+            🔍 SEO & Islamic content marketing • 
+            👥 Mosque partnerships • 
+            🌐 Social media outreach • 
+            ❤️ Word of mouth
+        </p>
+    </div>
+
+    <div class="highlight-box">
+        <h3 style="font-size: 18px; margin-bottom: 10px;">Initial Support Goal: $50,000</h3>
+        <p style="font-size: 12px; text-align: left;">
+            • Product Development: Mobile apps, additional features<br>
+            • Content Expansion: Hadith integration, multi-language support<br>
+            • Infrastructure: Hosting, AI improvements, audio recitations<br>
+            • Community Outreach: Marketing, partnerships, educational materials
+        </p>
+    </div>
+
+    <div class="slide-number">8 / 15</div>
+</div>
+
+<!-- Slide 9: Team -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">The Team</h2>
+        <div class="highlight-box" style="margin-bottom: 18px;">
+            <h3 style="font-size: 24px; margin-bottom: 6px;">Founding Team</h3>
+            <p style="font-size: 15px;">Dedicated to serving the Muslim community</p>
+        </div>
+        
+        <div class="content-box" style="margin-bottom: 15px;">
+            <h3>Mudathir Mudathir</h3>
+            <p style="font-size: 12px; color: #6b7280; margin: 4px 0;">Founder/CEO, CTO, UI/UX Designer</p>
+            <p>Vision, strategy, and technical architecture. Leading product development and design.</p>
+        </div>
+        
+        <div class="content-box" style="margin-bottom: 15px;">
+            <h3>Islamic Scholar Advisors</h3>
+            <p style="font-size: 12px; color: #6b7280; margin: 4px 0;">Ibrahim Faremi, Abdul Basit</p>
+            <p>Ensuring content authenticity and Islamic accuracy</p>
+        </div>
+        
+        <div class="content-box" style="margin-bottom: 15px;">
+            <h3>Advisory Board</h3>
+            <p style="margin-top: 8px;">• Islamic scholars for content verification<br>• Tech industry mentors<br>• Muslim community leaders</p>
+        </div>
+        
+        <div class="highlight-box">
+            <p style="font-size: 16px; font-weight: bold;">A team passionate about using technology to serve the Ummah</p>
+        </div>
+        
+        <div class="slide-number">9 / 15</div>
+    </div>
+
+    <!-- Slide 10: Competitive Advantage -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">Why We Will Win</h2>
+        
+        <div class="feature-item" style="margin-bottom: 12px;">
+            <div class="feature-icon"></div>
+            <div>
+                <h3 style="margin: 0; font-size: 16px; color: #1e3a8a;">Technology First</h3>
+                <p style="margin: 4px 0 0 0; font-size: 13px;">AI-powered natural language understanding, fastest and most accurate search, modern beautiful interface</p>
+            </div>
+        </div>
+        
+        <div class="feature-item" style="margin-bottom: 12px;">
+            <div class="feature-icon"></div>
+            <div>
+                <h3 style="margin: 0; font-size: 16px; color: #1e3a8a;">Authentic & Trusted</h3>
+                <p style="margin: 4px 0 0 0; font-size: 13px;">Only verified Qur'anic sources, Islamic scholar reviewed, transparent references</p>
+            </div>
+        </div>
+        
+        <div class="feature-item" style="margin-bottom: 12px;">
+            <div class="feature-icon"></div>
+            <div>
+                <h3 style="margin: 0; font-size: 16px; color: #1e3a8a;">User Experience</h3>
+                <p style="margin: 4px 0 0 0; font-size: 13px;">Chat-based interface familiar to all users, mobile-first design, instant results</p>
+            </div>
+        </div>
+        
+        <div class="feature-item" style="margin-bottom: 12px;">
+            <div class="feature-icon"></div>
+            <div>
+                <h3 style="margin: 0; font-size: 16px; color: #1e3a8a;">Focused Niche</h3>
+                <p style="margin: 4px 0 0 0; font-size: 13px;">Prayer-specific, not trying to be everything Islamic. Deep, not broad. Best solution for one problem.</p>
+            </div>
+        </div>
+        
+        <div class="feature-item">
+            <div class="feature-icon"></div>
+            <div>
+                <h3 style="margin: 0; font-size: 16px; color: #1e3a8a;">Scalable</h3>
+                <p style="margin: 4px 0 0 0; font-size: 13px;">API-first architecture, multi-language ready, global from day one</p>
+            </div>
+        </div>
+        
+        <div class="slide-number">10 / 15</div>
+    </div>
+
+    <!-- Slide 11: Impact Goals -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">3-Year Impact Goals</h2>
+        <div class="highlight-box" style="margin-bottom: 15px;">
+            <h3 style="font-size: 22px; margin-bottom: 6px;">Measuring Our Impact</h3>
+            <p style="font-size: 15px;">Success is measured in lives touched, not dollars earned</p>
+        </div>
+        
+        <div class="grid-3">
+            <div class="stat-box">
+                <p style="font-size: 12px; color: #6b7280; margin-bottom: 6px;">Year 1 (2025)</p>
+                <div class="stat-number">50K</div>
+                <div class="stat-label">Users Connected</div>
+            </div>
+            
+            <div class="stat-box">
+                <p style="font-size: 12px; color: #6b7280; margin-bottom: 6px;">Year 2 (2026)</p>
+                <div class="stat-number">500K</div>
+                <div class="stat-label">Users Connected</div>
+            </div>
+            
+            <div class="stat-box">
+                <p style="font-size: 12px; color: #6b7280; margin-bottom: 6px;">Year 3 (2027)</p>
+                <div class="stat-number">2M</div>
+                <div class="stat-label">Users Connected</div>
+            </div>
+        </div>
+        
+        <div class="content-box" style="margin-top: 15px;">
+            <h3>Key Focus Areas</h3>
+            <p style="margin-top: 8px;">• <strong>Year 1:</strong> Product development, user growth, community building</p>
+            <p>• <strong>Year 2:</strong> Scale reach, launch mobile apps, expand language support</p>
+            <p>• <strong>Year 3:</strong> International expansion, institutional partnerships, educational programs</p>
+        </div>
+        
+        <div style="background: #d1fae5; padding: 15px; border-radius: 6px; border: 2px solid #059669; margin-top: 15px;">
+            <h3 style="color: #064e3b; margin-bottom: 10px; font-size: 16px;">Sustainability Model</h3>
+            <p style="font-size: 12px;">✓ Islamic foundation grants and zakat funds<br>✓ Voluntary donations from the community<br>✓ Partnerships with mosques and Islamic organizations<br>✓ Educational institution sponsorships</p>
+        </div>
+        
+        <div class="slide-number">11 / 15</div>
+    </div>
+
+    <!-- Slide 12: Support Needed -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">Support & Partnership Opportunities</h2>
+        <div style="background: linear-gradient(135deg, #059669 0%, #065f46 100%); color: white; padding: 20px; border-radius: 6px; text-align: center; margin-bottom: 15px;">
+            <h3 style="font-size: 26px; margin-bottom: 8px;">How You Can Help</h3>
+            <p style="font-size: 16px;">Help us bring 1.8 billion Muslims closer to their faith</p>
+        </div>
+        
+        <div class="content-box" style="margin-bottom: 10px;">
+            <h3>🤝 Partnership</h3>
+            <p>Partner with us as a mosque, Islamic center, or educational institution to bring Dua Search to your community</p>
+        </div>
+        
+        <div class="content-box" style="margin-bottom: 10px;">
+            <h3>💝 Donation/Grant</h3>
+            <p>Support our mission through grants, zakat, or sadaqah to keep the platform free for everyone</p>
+        </div>
+        
+        <div class="content-box" style="margin-bottom: 10px;">
+            <h3>📢 Spread the Word</h3>
+            <p>Share Dua Search with your community, on social media, and with those seeking to strengthen their connection to faith</p>
+        </div>
+        
+        <div class="content-box" style="margin-bottom: 12px;">
+            <h3>Early User Feedback</h3>
+            <p style="margin-top: 8px; font-style: italic;">"Finally, an easy way to find prayers!" • "The interface is so intuitive" • "This is what modern Islamic apps should look like"</p>
+        </div>
+        
+        <div class="content-box">
+            <h3>Growth Strategy</h3>
+            <p style="margin-top: 8px;">🔍 SEO & Islamic content marketing • 👥 Mosque partnerships • 🌐 Social media outreach • ❤️ Word of mouth</p>
+        </div>
+        
+        <div class="slide-number">12 / 15</div>
+    </div>
+
+    <!-- Slide 13: Impact & Vision -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">Our Impact & Vision</h2>
+        <div class="highlight-box" style="margin-bottom: 15px; padding: 20px;">
+            <div style="font-size: 45px; margin-bottom: 10px;">❤️</div>
+            <h3 style="font-size: 24px; margin-bottom: 10px;">Social Mission</h3>
+            <p style="font-size: 18px;">"Bringing 1.8 billion Muslims closer to their faith through technology"</p>
+        </div>
+        
+        <div class="grid-2">
+            <div class="content-box">
+                <h3>🌍 Accessibility</h3>
+                <p>Make Islamic prayers accessible to non-Arabic speakers worldwide</p>
+            </div>
+            
+            <div class="content-box">
+                <h3>📖 Education</h3>
+                <p>Help Muslims learn and understand Qur'anic wisdom</p>
+            </div>
+            
+            <div class="content-box">
+                <h3>❤️ Connection</h3>
+                <p>Strengthen spiritual connection through ease of access</p>
+            </div>
+            
+            <div class="content-box">
+                <h3>⭐ Preservation</h3>
+                <p>Digital preservation of Islamic knowledge for future generations</p>
+            </div>
+        </div>
+        
+        <div style="background: #f3e8ff; padding: 20px; border-radius: 6px; border: 2px solid #a855f7; margin-top: 15px; text-align: center;">
+            <h3 style="color: #6b21a8; font-size: 18px; margin-bottom: 8px;">Long-Term Vision</h3>
+            <p style="color: #374151; font-size: 15px;">Become the #1 trusted platform for Islamic prayers worldwide, helping millions connect with their faith daily</p>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #059669 0%, #065f46 100%); color: white; padding: 15px; border-radius: 6px; margin-top: 15px;">
+            <h3 style="font-size: 16px; margin-bottom: 8px; text-align: center;">The Future</h3>
+            <p style="font-size: 13px; text-align: center;">✨ AI that understands your life context • 🤲 Personalized spiritual guidance<br>🌍 Global Muslim community platform • 📚 Preserving Islamic knowledge for generations</p>
+        </div>
+        
+        <div class="slide-number">13 / 15</div>
+    </div>
+
+    <!-- Slide 14: Call to Action -->
+    <div class="slide content-slide">
+        <h2 class="slide-title">Join Us in This Journey</h2>
+        <div class="highlight-box" style="margin-bottom: 15px;">
+            <h3 style="font-size: 28px; margin-bottom: 8px;">Let's Make Islamic Prayers Accessible</h3>
+            <p style="font-size: 18px;">To every Muslim, everywhere</p>
+        </div>
+        
+        <div class="content-box" style="margin-bottom: 15px;">
+            <h3>Contact Information</h3>
+            <p style="margin-top: 8px; font-size: 14px;">📧 mudathirajibolamudathir@gmail.com</p>
+            <p style="font-size: 14px;">🌐 duabymoon.netlify.app</p>
+        </div>
+        
+        <div style="background: #d1fae5; padding: 18px; border-radius: 6px; border: 2px solid #059669; margin-bottom: 15px;">
+            <h3 style="color: #064e3b; margin-bottom: 10px; font-size: 18px;">12-Month Milestones</h3>
+            <div class="grid-2" style="font-size: 13px; gap: 10px;">
+                <p>• 100,000+ registered users</p>
+                <p>• Hadith library launch</p>
+                <p>• iOS & Android apps live</p>
+                <p>• 10+ language support</p>
+                <p>• 50+ mosque partnerships</p>
+                <p>• Sustainable funding model</p>
+            </div>
+        </div>
+        
+        <div class="highlight-box">
+            <h3 style="font-size: 18px; margin-bottom: 10px;">Next Steps</h3>
+            <p style="text-align: left; font-size: 14px;">1️⃣ Schedule a detailed product demo<br>2️⃣ Discuss partnership or support opportunities<br>3️⃣ Meet the team<br>4️⃣ Explore collaboration possibilities</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 15px;">
+            <p style="font-size: 20px; font-weight: bold; color: #1e3a8a; margin-bottom: 5px;">🤲 Dua Search 🤲</p>
+            <p style="font-size: 16px; color: #6b7280; font-style: italic;">"Where Technology Meets Faith"</p>
+        </div>
+        
+        <div class="slide-number">14 / 15</div>
+    </div>
+
+    <!-- Slide 15: Thank You -->
+    <div class="slide title-slide">
+        <div style="font-size: 90px; margin-bottom: 25px;">🤲</div>
+        <h1 style="font-size: 58px;">Dua Search</h1>
+        <p class="subtitle" style="font-size: 28px;">"Where Technology Meets Faith"</p>
+        <div style="margin-top: 40px; font-size: 18px;">
+            <p style="margin-bottom: 12px;">📧 mudathirajibolamudathir@gmail.com</p>
+            <p>🌐 duabymoon.netlify.app</p>
+        </div>
+        <p style="margin-top: 40px; font-size: 22px; font-style: italic;">Thank you for your time and consideration</p>
+        <div class="slide-number">15 / 15</div>
+    </div>
+
+</body>
+</html>
