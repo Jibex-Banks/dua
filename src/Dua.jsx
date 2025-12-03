@@ -33,7 +33,15 @@ export default function Dua() {
 
     let response_data;
     try {
-      const response = await fetch("https://JibexBanks-duabymoon.hf.space/query", {
+      // const response = await fetch("https://JibexBanks-duabymoon.hf.space/query", {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ question: currentQuery })
+      // });
+
+      const response = await fetch("https://JibexBanks-duabymoon.hf.space/new/model/query", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
