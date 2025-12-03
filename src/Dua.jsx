@@ -91,7 +91,7 @@ export default function Dua() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="flex flex-col h-dvh bg-gradient-to-b from-blue-50 to-white">
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center space-x-3">
           <Book className="w-8 h-8" />
@@ -169,7 +169,7 @@ export default function Dua() {
                         )}
 
                         {dua.arabic && (
-                          <div className="rounded-3xl mb-4 pb-4 border border-blue-600 bg-blue-200 p-3 shadow-sm">
+                          <div className="arabic_text rounded-3xl mb-4 pb-4 border border-blue-600 bg-blue-200 p-3 shadow-sm">
                             <p className="text-sm font-semibold text-blue-600 mb-2">
                               Arabic
                             </p>
