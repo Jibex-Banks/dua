@@ -1,0 +1,16 @@
+# Robots.txt for Dua by Moon
+# Allow all search engines to crawl everything
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://duabymoon.com/sitemap.xml
+
+# Optional: Block admin or unnecessary pages if you have them
+# Disallow: /admin/
+# Disallow: /api/
+# Disallow: /private/
+
+# Crawl delay (optional - only if you have server load issues)
+# Crawl-delay: 10
