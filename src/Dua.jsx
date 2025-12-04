@@ -140,7 +140,7 @@ export default function Dua() {
         </script>
       </Helmet>
 
-      <div className="flex flex-col h-screen bg-gradient-to-b from-blue-50 to-white">
+      <div className="flex flex-col h-dvh bg-gradient-to-b from-blue-50 to-white">
         <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 shadow-lg">
           <div className="max-w-4xl mx-auto flex items-center space-x-3">
             <Book className="w-8 h-8" aria-label="Islamic Book Icon" />
@@ -160,7 +160,7 @@ export default function Dua() {
                   Welcome to Dua by Moon
                 </h2>
                 <p className="text-gray-500 mb-6">
-                  Search for authentic Islamic prayers and Quranic duas in natural language. Find supplications for every moment of your life - from daily prayers to special occasions.
+                  Search for authentic Islamic prayers and Quranic duas in natural language. Find supplications for every moment of your life from daily prayers to special occasions.
                 </p>
                 
                 {/* SEO-rich content section */}
@@ -170,7 +170,7 @@ export default function Dua() {
                     Dua by Moon is your comprehensive Islamic prayer search engine featuring authentic Quranic supplications with Arabic text and English translations. Whether you're seeking morning prayers, evening duas, travel supplications, or prayers for guidance and protection, our platform helps you find the perfect dua for every situation.
                   </p>
                   <p className="text-sm text-gray-700 leading-relaxed">
-                    Search by occasion, topic, or need - from daily dhikr to special event prayers. All duas are sourced from the Holy Quran with proper references and context.
+                    Search by occasion, topic, or need from daily dhikr to special event prayers. All duas are sourced from the Holy Quran with proper references and context.
                   </p>
                 </section>
 
