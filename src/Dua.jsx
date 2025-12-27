@@ -1,15 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Book } from 'lucide-react';
+import { Book, Share2, Download, X, Plus, Menu, MessageSquare, Send, Mail } from 'lucide-react';
+import './Dua.css';
 import { SparklesIcon } from 'lucide-react';
-import { SendHorizonal } from 'lucide-react';
-import { Helmet } from 'react-helmet';
-
 
 export default function Dua() {
   const [showSplash, setShowSplash] = useState(true);
   const [query, setQuery] = useState('');
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [shareModal, setShareModal] = useState(null);
+  const [chats, setChats] = useState([]);
+  const [currentChatId, setCurrentChatId] = useState(null);
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [generatedImage, setGeneratedImage] = useState(null);
+  const [generatedBlob, setGeneratedBlob] = useState(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -20,13 +25,170 @@ export default function Dua() {
   }, []);
 
   useEffect(() => {
+    const loadChats = async () => {
+      try {
+        const result = localStorage.getItem('dua_chats_list');
+        if (result) {
+          const savedChats = JSON.parse(result);
+          setChats(savedChats);
+
+          if (savedChats.length > 0) {
+            const latestChatId = savedChats[0].id;
+            setCurrentChatId(latestChatId);
+            await loadChat(latestChatId);
+          }
+        }
+      } catch (error) {
+        console.log('No previous chats found');
+      }
+    };
+    loadChats();
+  }, []);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const loadChat = async (chatId) => {
+    try {
+      const result = localStorage.getItem(`dua_chat_${chatId}`);
+      if (result) {
+        const chatData = JSON.parse(result);
+        setMessages(chatData.messages || []);
+      }
+    } catch (error) {
+      console.log('Failed to load chat:', error);
+      setMessages([]);
+    }
+  };
+
+  const saveCurrentChat = async () => {
+    if (!currentChatId || messages.length === 0) return;
+
+    try {
+      localStorage.setItem(`dua_chat_${currentChatId}`, JSON.stringify({
+        id: currentChatId,
+        messages: messages,
+        updatedAt: Date.now()
+      }));
+
+      const updatedChats = chats.map(chat =>
+        chat.id === currentChatId
+          ? { ...chat, preview: getPreviewText(), updatedAt: Date.now() }
+          : chat
+      );
+
+      localStorage.setItem('dua_chats_list', JSON.stringify(updatedChats));
+      setChats(updatedChats);
+    } catch (error) {
+      console.error('Failed to save chat:', error);
+    }
+  };
+
+  const getPreviewText = () => {
+    const userMessages = messages.filter(m => m.type === 'user');
+    if (userMessages.length > 0) {
+      const text = userMessages[0].text;
+      return text.substring(0, 50) + (text.length > 50 ? '...' : '');
+    }
+    return 'New conversation';
+  };
+
+  useEffect(() => {
+    if (currentChatId && messages.length > 0) {
+      const timeoutId = setTimeout(() => {
+        saveCurrentChat();
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [messages, currentChatId, chats]);
+
+  const createNewChat = async () => {
+    const newChatId = `chat_${Date.now()}`;
+    const newChat = {
+      id: newChatId,
+      preview: 'New conversation',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    };
+
+    const updatedChats = [newChat, ...chats];
+    setChats(updatedChats);
+    setCurrentChatId(newChatId);
+    setMessages([]);
+    setShowSidebar(false);
+
+    try {
+      localStorage.setItem('dua_chats_list', JSON.stringify(updatedChats));
+    } catch (error) {
+      console.error('Failed to save new chat:', error);
+    }
+  };
+
+  const switchChat = async (chatId) => {
+    if (chatId === currentChatId) {
+      setShowSidebar(false);
+      return;
+    }
+
+    setCurrentChatId(chatId);
+    await loadChat(chatId);
+    setShowSidebar(false);
+  };
+
+  const deleteChat = async (chatId, e) => {
+    e.stopPropagation();
+
+    if (!window.confirm('Are you sure you want to delete this conversation?')) {
+      return;
+    }
+
+    try {
+      localStorage.removeItem(`dua_chat_${chatId}`);
+
+      const updatedChats = chats.filter(chat => chat.id !== chatId);
+      localStorage.setItem('dua_chats_list', JSON.stringify(updatedChats));
+      setChats(updatedChats);
+
+      if (chatId === currentChatId) {
+        if (updatedChats.length > 0) {
+          setCurrentChatId(updatedChats[0].id);
+          await loadChat(updatedChats[0].id);
+        } else {
+          createNewChat();
+        }
+      }
+    } catch (error) {
+      console.error('Failed to delete chat:', error);
+    }
+  };
+
+  const formatChatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInHours = (now - date) / (1000 * 60 * 60);
+
+    if (diffInHours < 24) {
+      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    } else if (diffInHours < 48) {
+      return 'Yesterday';
+    } else if (diffInHours < 168) {
+      return date.toLocaleDateString('en-US', { weekday: 'short' });
+    } else {
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+  };
 
   const handleSearch = async () => {
     if (!query.trim()) return;
 
-    const userMessage = { type: 'user', text: query };
+    if (!currentChatId) {
+      await createNewChat();
+      // Small delay to ensure chat is created
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    const userMessage = { type: 'user', text: query, timestamp: Date.now() };
     setMessages(prev => [...prev, userMessage]);
     const currentQuery = query;
     setQuery('');
@@ -47,11 +209,8 @@ export default function Dua() {
       }
 
       const data = await response.json();
-      
-      // Ensure response_data is always an array
       response_data = Array.isArray(data) ? data : [data];
-      
-      // If empty array or null/undefined, show error
+
       if (!response_data || response_data.length === 0) {
         response_data = [{ error: 'No prayers found for your query. Please try different keywords.' }];
       }
@@ -60,9 +219,258 @@ export default function Dua() {
       response_data = [{ error: 'Sorry, an error occurred while fetching prayers. Please try again.' }];
     }
 
-    const botMessage = { type: 'bot', duas: response_data };
+    const botMessage = { type: 'bot', duas: response_data, timestamp: Date.now() };
     setMessages(prev => [...prev, botMessage]);
     setIsLoading(false);
+  };
+
+  const getPrayerTitle = (dua) => {
+    if (dua.title) {
+      const words = dua.title.split(' ').slice(0, 6);
+      return words.join(' ') + (dua.title.split(' ').length > 6 ? '...' : '');
+    }
+    return 'Prayer';
+  };
+
+  const generateDuaImage = async (dua) => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1080;
+      canvas.height = 1350;
+      const ctx = canvas.getContext('2d');
+
+      // Background gradient
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#1e3a8a');
+      gradient.addColorStop(0.5, '#3b82f6');
+      gradient.addColorStop(1, '#60a5fa');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Decorative circles
+      ctx.globalAlpha = 0.1;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(900, 150, 200, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(200, 1200, 150, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Header
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 76px Inter, Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('🤲', canvas.width / 2, 100);
+
+      ctx.font = 'bold 40px Inter, Arial';
+      ctx.fillText('Dua By Moon', canvas.width / 2, 160);
+
+      // Prayer Title
+      const prayerTitle = getPrayerTitle(dua);
+      ctx.font = '40px Inter, Arial';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.fillText(prayerTitle, canvas.width / 2, 210);
+
+      // Card
+      const padding = 80;
+      const cardY = 270;
+      const cardHeight = 850;
+      const radius = 30;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+      ctx.shadowBlur = 30;
+      ctx.shadowOffsetY = 15;
+
+      ctx.beginPath();
+      ctx.moveTo(padding + radius, cardY);
+      ctx.arcTo(canvas.width - padding, cardY, canvas.width - padding, cardY + radius, radius);
+      ctx.arcTo(canvas.width - padding, cardY + cardHeight, canvas.width - padding - radius, cardY + cardHeight, radius);
+      ctx.arcTo(padding, cardY + cardHeight, padding, cardY + cardHeight - radius, radius);
+      ctx.arcTo(padding, cardY, padding + radius, cardY, radius);
+      ctx.fill();
+
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+
+      let y = cardY + 70;
+      const maxWidth = canvas.width - padding * 2 - 60;
+
+      const wrapText = (text, size, weight = 'normal', fontFamily = 'Inter, Arial') => {
+        const textStr = text == null ? '' : String(text);
+        ctx.font = `${weight} ${size}px ${fontFamily}`;
+        const words = textStr.split(' ');
+        let line = '';
+        const lines = [];
+
+        for (let word of words) {
+          const test = line + word + ' ';
+          if (ctx.measureText(test).width > maxWidth && line !== '') {
+            lines.push(line.trim());
+            line = word + ' ';
+          } else {
+            line = test;
+          }
+        }
+        if (line.trim() !== '') {
+          lines.push(line.trim());
+        }
+        return lines;
+      };
+
+      // Arabic
+      if (dua.arabic) {
+        ctx.fillStyle = '#1e40af';
+        ctx.textAlign = 'center';
+        wrapText(dua.arabic, 50, 'bold', 'Scheherazade New, Arial').forEach(line => {
+          ctx.fillText(line, canvas.width / 2, y);
+          y += 58;
+        });
+        y += 35;
+
+        // Divider
+        ctx.strokeStyle = '#bfdbfe';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(padding + 50, y);
+        ctx.lineTo(canvas.width - padding - 50, y);
+        ctx.stroke();
+        y += 45;
+      }
+
+      // Meaning
+      if (dua.meaning) {
+        ctx.fillStyle = '#475569';
+        ctx.font = 'italic 40px Inter, Arial';
+        ctx.textAlign = 'center';
+        wrapText(dua.meaning, 42).forEach(line => {
+          ctx.fillText(line, canvas.width / 2, y);
+          y += 44;
+        });
+        y += 30;
+      }
+
+      // Reference
+      if (dua.refrence) {
+        ctx.fillStyle = '#64748b';
+        ctx.font = '32px Inter, Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`— ${dua.refrence}`, canvas.width / 2, y);
+      }
+
+      // Footer
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 50px Inter, Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Find more at duabymoon.netlify.app', canvas.width / 2, canvas.height - 80);
+
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error('Failed to generate image'));
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        resolve({ blob, url });
+      }, 'image/png', 1.0);
+    });
+  };
+
+  const downloadImage = (blob, filename = 'dua-prayer.png') => {
+    try {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Download failed. Please try again.');
+    }
+  };
+
+  const shareWithCaption = async (blob, platform) => {
+    const caption = '🤲 A beautiful Islamic prayer\n\nMay this prayer bring peace to your heart.\n\n📖 Discover more authentic Islamic duas:\nhttps://duabymoon.netlify.app';
+
+    // Try native share first (mobile devices)
+    if (navigator.canShare) {
+      try {
+        const file = new File([blob], 'dua-prayer.png', { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: 'Islamic Prayer 🤲',
+            text: caption,
+            files: [file],
+          });
+          return true;
+        }
+      } catch (error) {
+        if (error.name === 'AbortError') return false;
+      }
+    }
+
+    // Fallback: Download image + open social link
+    downloadImage(blob);
+
+    const text = encodeURIComponent(caption);
+    const links = {
+      whatsapp: `https://wa.me/?text=${text}`,
+      twitter: `https://twitter.com/intent/tweet?text=${text}`,
+      telegram: `https://t.me/share/url?url=https://duabymoon.netlify.app&text=${text}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=https://duabymoon.netlify.app&quote=${text}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=https://duabymoon.netlify.app`,
+      reddit: `https://reddit.com/submit?title=Islamic%20Prayer&url=https://duabymoon.netlify.app`,
+    };
+
+    if (links[platform]) {
+      setTimeout(() => {
+        window.open(links[platform], '_blank', 'width=600,height=500,noopener,noreferrer');
+      }, 500);
+    }
+
+    return false;
+  };
+
+  const handleShareClick = async (platform) => {
+    if (!generatedBlob) {
+      alert('Image is still generating. Please wait.');
+      return;
+    }
+
+    if (platform === 'download') {
+      downloadImage(generatedBlob);
+      setShareModal(null);
+      return;
+    }
+
+    await shareWithCaption(generatedBlob, platform);
+    setShareModal(null);
+    setGeneratedImage(null);
+    setGeneratedBlob(null);
+  };
+
+  const handleShareButtonClick = async (dua) => {
+    setShareModal({ dua });
+    setIsGeneratingImage(true);
+    setGeneratedImage(null);
+    setGeneratedBlob(null);
+
+    try {
+      const { blob, url } = await generateDuaImage(dua);
+      setGeneratedBlob(blob);
+      setGeneratedImage(url);
+    } catch (error) {
+      console.error('Image generation failed:', error);
+      alert('Failed to generate image. Please try again.');
+      setShareModal(null);
+    } finally {
+      setIsGeneratingImage(false);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -72,19 +480,29 @@ export default function Dua() {
     }
   };
 
+  const contactWhatsApp = () => {
+    const message = encodeURIComponent('Hello! I found your Dua app and wanted to reach out. (Message from duabymoon.netlify.app)');
+    window.open(`https://wa.me/2348155512886?text=${message}`, '_blank');
+  };
+
+  const contactEmail = () => {
+    const subject = encodeURIComponent('Contact from Dua App');
+    const body = encodeURIComponent('Hello,\n\nI found your Dua app and wanted to reach out.\n\n(Message from duabymoon.netlify.app)');
+    window.open(`mailto:mudathirajibolamudathir@gmail.com?subject=${subject}&body=${body}`, '_blank');
+  };
   if (showSplash) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 flex items-center justify-center">
-        <div className="text-center animate-fade-in">
-          <div className="mb-6 animate-bounce">
-            <Book className="w-20 h-20 text-white mx-auto" />
+      <div className="splash-screen">
+        <div className="splash-content">
+          <div className="splash-icon">
+            <Book size={80} />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Dua by Moon</h1>
-          <p className="text-blue-200 text-lg">Find Qur'anic Prayers</p>
-          <div className="mt-8 flex justify-center space-x-2">
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse delay-100"></div>
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse delay-200"></div>
+          <h1 className="splash-title">Dua</h1>
+          <p className="splash-subtitle">Find Islamic Prayers</p>
+          <div className="splash-loader">
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
         </div>
       </div>
@@ -92,199 +510,191 @@ export default function Dua() {
   }
 
   return (
-    <>
-      <Helmet>
-        <title>Dua by Moon - Islamic Prayers & Quranic Duas Search Engine</title>
-        <meta name="description" content="Dua by Moon: Search and discover authentic Islamic prayers, Quranic duas, and supplications in Arabic with English translations. Find prayers for traveling, guidance, protection, gratitude, and every life situation." />
-        <meta name="keywords" content="dua by moon, duabymoon, islamic prayers, quranic duas, muslim prayers, dua search, islamic supplications, quran prayers, dua for traveling, dua for guidance, dua for protection, morning prayers, evening prayers, arabic duas, islamic prayer app, muslim dua collection, authentic duas, prophetic prayers" />
-        
-        {/* Open Graph Meta Tags */}
-        <meta property="og:title" content="Dua by Moon - Islamic Prayers & Quranic Duas Search Engine" />
-        <meta property="og:description" content="Search and discover authentic Islamic prayers and Quranic duas with translations. Find the perfect prayer for every moment of your life." />
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Dua by Moon" />
-        
-        {/* Twitter Card Meta Tags */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Dua by Moon - Islamic Prayers & Quranic Duas" />
-        <meta name="twitter:description" content="Search authentic Islamic prayers and Quranic duas with translations for every life situation." />
-        
-        {/* Additional SEO Meta Tags */}
-        <meta name="author" content="Dua by Moon" />
-        <meta name="robots" content="index, follow" />
-        <meta name="language" content="English" />
-        <meta name="revisit-after" content="7 days" />
-        <meta name="category" content="Religion & Spirituality" />
-        <link rel="canonical" href="https://duabymoon.com" />
-        
-        {/* Schema.org structured data */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            "name": "Dua by Moon",
-            "description": "Islamic prayers and Quranic duas search engine with Arabic text and English translations",
-            "applicationCategory": "ReligiousApplication",
-            "operatingSystem": "Web",
-            "offers": {
-              "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "USD"
-            },
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "ratingCount": "1250"
-            }
-          })}
-        </script>
-      </Helmet>
+    <div className="app-container">
+      {/* Sidebar */}
+      <div className={`sidebar ${showSidebar ? 'sidebar-open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="sidebar-title-row">
+            <h2 className="sidebar-title">Conversations</h2>
+            <button onClick={() => setShowSidebar(false)} className="sidebar-close-btn">
+              <X size={20} />
+            </button>
+          </div>
+          <button onClick={createNewChat} className="new-chat-btn">
+            <Plus size={18} />
+            <span>New Chat</span>
+          </button>
+        </div>
 
-      <div className="flex flex-col h-dvh bg-gradient-to-b from-blue-50 to-white">
-        <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 shadow-lg">
-          <div className="max-w-4xl mx-auto flex items-center space-x-3">
-            <Book className="w-8 h-8" aria-label="Islamic Book Icon" />
-            <div>
-              <h1 className="text-xl font-bold">Dua by Moon</h1>
-              <p className="text-xs text-blue-100">Find Qur'anic Prayers & Islamic Supplications</p>
+        <div className="chats-list">
+          {chats.length === 0 ? (
+            <div className="empty-chats">
+              <p>No conversations yet.</p>
+              <p>Start a new chat!</p>
             </div>
+          ) : (
+            chats.map(chat => (
+              <div
+                key={chat.id}
+                onClick={() => switchChat(chat.id)}
+                className={`chat-item ${chat.id === currentChatId ? 'chat-item-active' : ''}`}
+              >
+                <div className="chat-item-content">
+                  <p className="chat-preview">{chat.preview}</p>
+                  <p className="chat-date">{formatChatDate(chat.updatedAt)}</p>
+                </div>
+                <button
+                  onClick={(e) => deleteChat(chat.id, e)}
+                  className="chat-delete-btn"
+                  title="Delete conversation"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Contact Section */}
+        <div className="contact-section">
+          <p className="contact-title">Need Help?</p>
+          <div className="contact-buttons">
+            <button onClick={contactWhatsApp} className="contact-btn whatsapp-btn">
+              <MessageSquare size={18} />
+              <span>WhatsApp</span>
+            </button>
+            <button onClick={contactEmail} className="contact-btn email-btn">
+              <Mail size={18} />
+              <span>Email</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Overlay */}
+      {showSidebar && <div className="sidebar-overlay" onClick={() => setShowSidebar(false)} />}
+
+      {/* Main Content */}
+      <div className="main-content">
+        {/* Header */}
+        <header className="app-header">
+          <div className="header-content">
+            <div className="header-left">
+              <button onClick={() => setShowSidebar(true)} className="menu-btn">
+                <Menu size={24} />
+              </button>
+              <div className="header-logo">
+                <Book size={32} />
+              </div>
+              <div className="header-text">
+                <h1>Dua</h1>
+                <p>Find Islamic Prayers</p>
+              </div>
+            </div>
+            <button onClick={createNewChat} className="header-new-chat-btn">
+              <Plus size={18} />
+              <span className="btn-text-desktop">New Chat</span>
+            </button>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 space-y-4">
-          <div className="max-w-4xl mx-auto">
+        {/* Messages Area */}
+        <div className="messages-container">
+          <div className="messages-wrapper">
             {messages.length === 0 && (
-              <article className="text-center py-12">
-                <SparklesIcon className="w-16 h-16 text-blue-300 mx-auto mb-4" aria-hidden="true" />
-                <h2 className="text-2xl font-semibold text-gray-700 mb-2">
-                  Welcome to Dua by Moon
-                </h2>
-                <p className="text-gray-500 mb-6">
-                  Search for authentic Islamic prayers and Quranic duas in natural language. Find supplications for every moment of your life from daily prayers to special occasions.
+              <div className="welcome-screen">
+                <div className="welcome-icon"><SparklesIcon className="sparkles-icon" /></div>
+                <h2 className="welcome-title">Welcome to Dua</h2>
+                <p className="welcome-subtitle">
+                  Ask for Islamic prayers and your conversations will be saved
                 </p>
-                
-                {/* SEO-rich content section */}
-                <section className="bg-blue-50 rounded-xl p-6 mb-6 text-left max-w-2xl mx-auto">
-                  <h3 className="text-lg font-semibold text-blue-900 mb-3">Discover Islamic Prayers & Duas</h3>
-                  <p className="text-sm text-gray-700 leading-relaxed mb-2">
-                    Dua by Moon is your comprehensive Islamic prayer search engine featuring authentic Quranic supplications with Arabic text and English translations. Whether you're seeking morning prayers, evening duas, travel supplications, or prayers for guidance and protection, our platform helps you find the perfect dua for every situation.
-                  </p>
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    Search by occasion, topic, or need from daily dhikr to special event prayers. All duas are sourced from the Holy Quran with proper references and context.
-                  </p>
-                </section>
-
-                <div className="mt-8 space-y-2">
-                  <h3 className="text-sm text-gray-600 font-semibold">Popular Searches:</h3>
-                  <nav className="flex flex-wrap justify-center gap-2" aria-label="Popular prayer searches">
-                    {[
-                      'Prayer before leaving the house',
-                      'Dua for guidance',
-                      'Prayer for patience',
-                      'Morning prayers',
-                      'Travel dua',
-                      'Prayer for protection'
-                    ].map((example) => (
+                <div className="examples-section">
+                  <p className="examples-label">Try asking:</p>
+                  <div className="examples-grid">
+                    {['Prayer before leaving the house', 'Prayer before eating', 'Prayers for breaking the fast'].map((example) => (
                       <button
                         key={example}
                         onClick={() => setQuery(example)}
-                        className="px-4 py-2 bg-white border border-blue-200 rounded-full text-sm text-blue-600 hover:bg-blue-50 transition"
-                        aria-label={`Search for ${example}`}
+                        className="example-btn"
                       >
                         {example}
                       </button>
                     ))}
-                  </nav>
+                  </div>
                 </div>
-              </article>
+              </div>
             )}
 
             {messages.map((message, index) => (
-              <div key={index}>
+              <div key={index} className={`message-row ${message.type === 'user' ? 'message-user' : 'message-bot'}`}>
                 {message.type === 'user' ? (
-                  <div className="flex justify-end mb-4">
-                    <div className="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 max-w-xs shadow-md">
-                      <p className="text-sm">{message.text}</p>
-                    </div>
+                  <div className="user-message">
+                    <p>{message.text}</p>
                   </div>
                 ) : (
-                  <div className="flex justify-start mb-4">
-                    <div className="space-y-3 max-w-xl">
-                      {(message.duas || []).map((dua, duaIndex) => (
-                        <article
-                          key={duaIndex}
-                          className="bg-white rounded-2xl rounded-tl-sm shadow-lg p-5 border border-blue-100"
-                          itemScope
-                          itemType="https://schema.org/CreativeWork"
-                        >
-                          {dua.error && (
-                            <div role="alert">
-                              <p className="text-xs font-semibold text-red-600 mb-1">
-                                Error
-                              </p>
-                              <p className="text-sm text-gray-700 leading-relaxed">
-                                {dua.error}
-                              </p>
-                            </div>
-                          )}
-                          {dua.background && (
-                            <div className="mb-4 pb-4 border-b border-gray-200">
-                              <h4 className="text-xs font-semibold text-blue-600 mb-2">
-                                BACKGROUND
-                              </h4>
-                              <p className="text-sm text-gray-700 leading-relaxed" itemProp="description">
-                                {dua.background}
-                              </p>
-                            </div>
-                          )}
+                  <div className="bot-messages">
+                    {(message.duas || []).map((dua, duaIndex) => (
+                      <div key={duaIndex} className="dua-card">
+                        {!dua.error && (
+                          <button
+                            onClick={() => handleShareButtonClick(dua)}
+                            className="share-btn-fixed"
+                            title="Share this prayer"
+                          >
+                            <Share2 size={18} />
+                          </button>
+                        )}
 
-                          {dua.arabic && (
-                            <div className="rounded-3xl mb-4 pb-4 border border-blue-600 bg-blue-200 p-3 shadow-sm">
-                              <h4 className="text-sm font-semibold text-blue-600 mb-2">
-                                Arabic Text
-                              </h4>
-                              <p className="text-xl text-blue-600 leading-relaxed" dir="rtl" lang="ar" itemProp="text">
-                                {dua.arabic}
-                              </p>
-                            </div>
-                          )}
+                        {dua.error ? (
+                          <div className="dua-error">
+                            <p className="error-label">Error</p>
+                            <p className="error-text">{dua.error}</p>
+                          </div>
+                        ) : (
+                          <>
+                            {dua.background && (
+                              <div className="dua-section dua-background">
+                                <p className="section-label">BACKGROUND</p>
+                                <p className="section-text">{dua.background}</p>
+                              </div>
+                            )}
 
-                          {dua.refrence && (
-                            <div className="mb-4">
-                              <h4 className="text-xs font-semibold text-blue-600 mb-2">
-                                REFERENCE
-                              </h4>
-                              <p className="text-sm text-gray-800 font-medium" itemProp="citation">
-                                {dua.refrence}
-                              </p>
-                            </div>
-                          )}
+                            {dua.arabic && (
+                              <div className="dua-section dua-arabic">
+                                <p className="section-label">Arabic</p>
+                                <p className="arabic-text" dir="rtl">{dua.arabic}</p>
+                              </div>
+                            )}
 
-                          {dua.meaning && (
-                            <div>
-                              <h4 className="text-xs font-semibold text-blue-600 mb-2">
-                                ENGLISH TRANSLATION
-                              </h4>
-                              <p className="text-sm text-gray-800 leading-relaxed italic" itemProp="text">
-                                "{dua.meaning}"
-                              </p>
-                            </div>
-                          )}
-                        </article>
-                      ))}
-                    </div>
+                            {dua.refrence && (
+                              <div className="dua-section">
+                                <p className="section-label">REFERENCE</p>
+                                <p className="section-text reference-text">{dua.refrence}</p>
+                              </div>
+                            )}
+
+                            {dua.meaning && (
+                              <div className="dua-section">
+                                <p className="section-label">TRANSLATION</p>
+                                <p className="section-text translation-text">"{dua.meaning}"</p>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
             ))}
 
             {isLoading && (
-              <div className="flex justify-start mb-4" role="status" aria-live="polite" aria-label="Loading prayers">
-                <div className="bg-white rounded-2xl rounded-tl-sm shadow-md px-6 py-4">
-                  <div className="flex space-x-2">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-100"></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-200"></div>
+              <div className="message-row message-bot">
+                <div className="loading-message">
+                  <div className="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                   </div>
                 </div>
               </div>
@@ -292,69 +702,131 @@ export default function Dua() {
 
             <div ref={messagesEndRef} />
           </div>
-        </main>
+        </div>
 
-        <footer className="bg-white border-t border-gray-200 p-4 shadow-lg">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center space-x-2">
-              <div className="flex-1 relative">
-                <label htmlFor="dua-search-input" className="sr-only">Search for Islamic prayers and duas</label>
-                <input
-                  id="dua-search-input"
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Ask for a prayer... (e.g., prayer before traveling, dua for success)"
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  aria-label="Search for Islamic prayers"
-                />
-                <button
-                  onClick={handleSearch}
-                  disabled={!query.trim() || isLoading}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
-                  aria-label="Search for dua"
-                >
-                  <SendHorizonal className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+        {/* Input Area */}
+        <div className="input-container">
+          <div className="input-wrapper">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Ask for a prayer... (e.g., prayer before traveling)"
+              className="message-input"
+            />
+            <button
+              onClick={handleSearch}
+              disabled={!query.trim() || isLoading}
+              className="send-btn"
+            >
+              <Send size={20} />
+            </button>
           </div>
-        </footer>
+        </div>
       </div>
 
-      <style>{`
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: scale(0.9);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out;
-        }
-        .delay-100 {
-          animation-delay: 0.1s;
-        }
-        .delay-200 {
-          animation-delay: 0.2s;
-        }
-        .sr-only {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          padding: 0;
-          margin: -1px;
-          overflow: hidden;
-          clip: rect(0, 0, 0, 0);
-          white-space: nowrap;
-          border-width: 0;
-        }
-      `}</style>
-    </>
+      {/* Share Modal */}
+      {shareModal && (
+        <div className="modal-overlay" onClick={() => {
+          setShareModal(null);
+          setGeneratedImage(null);
+          setGeneratedBlob(null);
+        }}>
+          <div className="share-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="modal-title">
+                <Share2 size={20} />
+                Share Prayer
+              </h3>
+              <button onClick={() => {
+                setShareModal(null);
+                setGeneratedImage(null);
+                setGeneratedBlob(null);
+              }} className="modal-close-btn">
+                <X size={24} />
+              </button>
+            </div>
+
+            {isGeneratingImage ? (
+              <div className="generating-state">
+                <div className="spinner"></div>
+                <p>Generating beautiful image...</p>
+              </div>
+            ) : (
+              <>
+                {generatedImage && (
+                  <div className="image-preview-container">
+                    <img src={generatedImage} alt="Prayer Preview" className="preview-image" />
+                  </div>
+                )}
+
+                <div className="share-options">
+                  <p className="share-info">Image will be downloaded with caption!</p>
+
+                  {/* <div className="share-grid">
+                    <button onClick={() => handleShareClick('whatsapp')} className="share-option whatsapp">
+                      <div className="share-icon">
+                        <MessageSquare size={24} />
+                      </div>
+                      <span>WhatsApp</span>
+                    </button>
+
+                    <button onClick={() => handleShareClick('facebook')} className="share-option facebook">
+                      <div className="share-icon">
+                        <span className="icon-text">f</span>
+                      </div>
+                      <span>Facebook</span>
+                    </button>
+
+                    <button onClick={() => handleShareClick('twitter')} className="share-option twitter">
+                      <div className="share-icon">
+                        <span className="icon-text">𝕏</span>
+                      </div>
+                      <span>Twitter</span>
+                    </button>
+
+                    <button onClick={() => handleShareClick('telegram')} className="share-option telegram">
+                      <div className="share-icon">
+                        <span className="icon-text">✈</span>
+                      </div>
+                      <span>Telegram</span>
+                    </button>
+
+                    <button onClick={() => handleShareClick('linkedin')} className="share-option linkedin">
+                      <div className="share-icon">
+                        <span className="icon-text">in</span>
+                      </div>
+                      <span>LinkedIn</span>
+                    </button>
+
+                    <button onClick={() => handleShareClick('reddit')} className="share-option reddit">
+                      <div className="share-icon">
+                        <span className="icon-text">R</span>
+                      </div>
+                      <span>Reddit</span>
+                    </button>
+                  </div> */}
+
+                  <button onClick={() => handleShareClick('telegram')} className="share-option telegram">
+                    <div className="share-icon">
+                      <span className="icon-text"><Share2 size={20} /></span>
+                    </div>
+                    <span>Share</span>
+                  </button>
+                  <button
+                    onClick={() => handleShareClick('download')}
+                    className="download-only-btn"
+                  >
+                    <Download size={18} />
+                    Just Download Image
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
