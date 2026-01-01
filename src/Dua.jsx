@@ -506,13 +506,14 @@ export default function Dua() {
       //     </div>
       //   </div>
       // </div>
+
       // JSX Code for Splash Screen with Happy New Year Banner
       <div className="splash-screen">
         <div className="splash-content">
           {/* New Year Banner */}
           <div className="new-year-banner">
             <div className="banner-sparkle">✨</div>
-            <span className="banner-text">Happy New Year 2025!</span>
+            <span className="banner-text">Happy New Year 2026!</span>
             <div className="banner-sparkle">✨</div>
           </div>
 
