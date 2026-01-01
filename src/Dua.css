@@ -323,7 +323,7 @@
 /* App Container */
 .app-container {
     display: flex;
-    height: 98vh;
+    height: 100dvh;
     overflow: hidden;
     background: linear-gradient(to bottom, #eff6ff, #ffffff);
 }
