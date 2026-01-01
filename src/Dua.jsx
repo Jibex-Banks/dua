@@ -196,7 +196,7 @@ export default function Dua() {
 
     let response_data;
     try {
-      const response = await fetch("https://JibexBanks-duabymoon.hf.space/query", {
+      const response = await fetch("https://JibexBanks-duabymoon.hf.space/new/model/query", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -492,18 +492,59 @@ export default function Dua() {
   };
   if (showSplash) {
     return (
+      // <div className="splash-screen">
+      //   <div className="splash-content">
+      //     <div className="splash-icon">
+      //       <Book size={80} />
+      //     </div>
+      //     <h1 className="splash-title">Dua</h1>
+      //     <p className="splash-subtitle">Find Islamic Prayers</p>
+      //     <div className="splash-loader">
+      //       <span></span>
+      //       <span></span>
+      //       <span></span>
+      //     </div>
+      //   </div>
+      // </div>
+      // JSX Code for Splash Screen with Happy New Year Banner
       <div className="splash-screen">
         <div className="splash-content">
+          {/* New Year Banner */}
+          <div className="new-year-banner">
+            <div className="banner-sparkle">✨</div>
+            <span className="banner-text">Happy New Year 2025!</span>
+            <div className="banner-sparkle">✨</div>
+          </div>
+
           <div className="splash-icon">
             <Book size={80} />
           </div>
           <h1 className="splash-title">Dua</h1>
           <p className="splash-subtitle">Find Islamic Prayers</p>
+
+          {/* New Year Greeting */}
+          <p className="new-year-greeting">
+            May this year bring you peace, blessings, and answered prayers 🤲
+          </p>
+
           <div className="splash-loader">
             <span></span>
             <span></span>
             <span></span>
           </div>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="confetti-container">
+          <div className="confetti" style={{ left: '10%', animationDelay: '0s' }}>🎊</div>
+          <div className="confetti" style={{ left: '20%', animationDelay: '0.5s' }}>🎉</div>
+          <div className="confetti" style={{ left: '30%', animationDelay: '1s' }}>✨</div>
+          <div className="confetti" style={{ left: '40%', animationDelay: '0.3s' }}>🌟</div>
+          <div className="confetti" style={{ left: '50%', animationDelay: '0.8s' }}>🎊</div>
+          <div className="confetti" style={{ left: '60%', animationDelay: '0.2s' }}>🎉</div>
+          <div className="confetti" style={{ left: '70%', animationDelay: '0.6s' }}>✨</div>
+          <div className="confetti" style={{ left: '80%', animationDelay: '0.4s' }}>🌟</div>
+          <div className="confetti" style={{ left: '90%', animationDelay: '0.9s' }}>🎊</div>
         </div>
       </div>
     );
